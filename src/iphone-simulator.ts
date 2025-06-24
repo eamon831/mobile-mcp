@@ -1,7 +1,7 @@
 import { execFileSync } from "child_process";
 
 import { WebDriverAgent } from "./webdriver-agent";
-import { ActionableError, Button, InstalledApp, Robot, ScreenElement, ScreenSize, SwipeDirection, Orientation, NetworkInfo } from "./robot";
+import { ActionableError, Button, InstalledApp, Robot, ScreenElement, ScreenSize, SwipeDirection, Orientation, NetworkInfo, NetworkType } from "./robot";
 
 export interface Simulator {
 	name: string;
@@ -156,6 +156,33 @@ export class Simctl implements Robot {
 				type: "none",
 				isConnected: false,
 			};
+		}
+	}
+
+	public async setNetworkEnabled(enabled: boolean): Promise<void> {
+		if (enabled) {
+			// For simulators, we can't really disable network since it uses host
+			// But we can simulate by using network condition control
+			// This would typically require additional simulator controls
+			throw new ActionableError("Network enabling on iOS simulator requires network condition profiles - use Xcode Network Link Conditioner");
+		} else {
+			// For testing purposes, we could use network conditions to simulate offline
+			throw new ActionableError("Network disabling on iOS simulator requires network condition profiles - use Xcode Network Link Conditioner");
+		}
+	}
+
+	public async setNetworkType(networkType: NetworkType): Promise<void> {
+		// Simulators inherit host network, but can be modified with network conditions
+		switch (networkType) {
+			case "wifi":
+				// This is the default for simulators - no change needed
+				break;
+			case "cellular":
+				throw new ActionableError("Cellular simulation requires Xcode Network Link Conditioner profiles");
+			case "none":
+				throw new ActionableError("Network offline simulation requires Xcode Network Link Conditioner profiles");
+			case "unknown":
+				throw new ActionableError("Cannot set network type to 'unknown'");
 		}
 	}
 }

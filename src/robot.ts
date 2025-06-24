@@ -134,4 +134,16 @@ export interface Robot {
 	 * Get network connectivity information including type, status, and details.
 	 */
 	getNetworkInfo(): Promise<NetworkInfo>;
+
+	/**
+	 * Enable or disable network connectivity on the device.
+	 * @param enabled Whether to enable (true) or disable (false) network connectivity
+	 */
+	setNetworkEnabled(enabled: boolean): Promise<void>;
+
+	/**
+	 * Set the preferred network type for the device (when available).
+	 * @param networkType The desired network type ("wifi", "cellular", or "none")
+	 */
+	setNetworkType(networkType: NetworkType): Promise<void>;
 }

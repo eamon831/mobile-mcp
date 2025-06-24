@@ -2,7 +2,7 @@ import { execFileSync } from "child_process";
 import { Socket } from "net";
 
 import { WebDriverAgent } from "./webdriver-agent";
-import { ActionableError, Button, InstalledApp, Robot, ScreenSize, SwipeDirection, ScreenElement, Orientation, NetworkInfo } from "./robot";
+import { ActionableError, Button, InstalledApp, Robot, ScreenSize, SwipeDirection, ScreenElement, Orientation, NetworkInfo, NetworkType } from "./robot";
 
 const WDA_PORT = 8100;
 const IOS_TUNNEL_PORT = 60105;
@@ -236,6 +236,18 @@ export class IosRobot implements Robot {
 				isConnected: false,
 			};
 		}
+	}
+
+	public async setNetworkEnabled(enabled: boolean): Promise<void> {
+		// Note: iOS physical devices have limited programmatic network control
+		// This would typically require MDM profiles or jailbreak
+		throw new ActionableError("Network control not supported on iOS physical devices - requires MDM configuration or device management profile");
+	}
+
+	public async setNetworkType(networkType: NetworkType): Promise<void> {
+		// Note: iOS physical devices have limited programmatic network control
+		// This would typically require MDM profiles or specific apps
+		throw new ActionableError("Network type control not supported on iOS physical devices - requires MDM configuration or device management profile");
 	}
 }
 

@@ -487,6 +487,32 @@ export const createMcpServer = (): McpServer => {
 		}
 	);
 
+	tool(
+		"mobile_set_network_enabled",
+		"Enable or disable network connectivity on the device",
+		{
+			enabled: z.boolean().describe("Whether to enable (true) or disable (false) network connectivity"),
+		},
+		async ({ enabled }) => {
+			requireRobot();
+			await robot!.setNetworkEnabled(enabled);
+			return `Network ${enabled ? "enabled" : "disabled"}`;
+		}
+	);
+
+	tool(
+		"mobile_set_network_type",
+		"Set the preferred network type for the device when available",
+		{
+			networkType: z.enum(["wifi", "cellular", "none"]).describe("The desired network type"),
+		},
+		async ({ networkType }) => {
+			requireRobot();
+			await robot!.setNetworkType(networkType);
+			return `Network type set to ${networkType}`;
+		}
+	);
+
 	// async check for latest agent version
 	checkForLatestAgentVersion().then();
 

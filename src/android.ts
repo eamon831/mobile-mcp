@@ -3,7 +3,7 @@ import { execFileSync } from "child_process";
 
 import * as xml from "fast-xml-parser";
 
-import { ActionableError, Button, InstalledApp, Robot, ScreenElement, ScreenElementRect, ScreenSize, SwipeDirection, Orientation, NetworkInfo } from "./robot";
+import { ActionableError, Button, InstalledApp, Robot, ScreenElement, ScreenElementRect, ScreenSize, SwipeDirection, Orientation, NetworkInfo, NetworkType } from "./robot";
 
 export interface AndroidDevice {
 	deviceId: string;
@@ -332,6 +332,38 @@ export class AndroidRobot implements Robot {
 				type: "none",
 				isConnected: false,
 			};
+		}
+	}
+
+	public async setNetworkEnabled(enabled: boolean): Promise<void> {
+		if (enabled) {
+			// Enable WiFi
+			this.adb("shell", "svc", "wifi", "enable");
+		} else {
+			// Disable WiFi
+			this.adb("shell", "svc", "wifi", "disable");
+		}
+	}
+
+	public async setNetworkType(networkType: NetworkType): Promise<void> {
+		switch (networkType) {
+			case "wifi":
+				// Enable WiFi and disable cellular data
+				this.adb("shell", "svc", "wifi", "enable");
+				this.adb("shell", "svc", "data", "disable");
+				break;
+			case "cellular":
+				// Enable cellular data and disable WiFi
+				this.adb("shell", "svc", "data", "enable");
+				this.adb("shell", "svc", "wifi", "disable");
+				break;
+			case "none":
+				// Disable both WiFi and cellular
+				this.adb("shell", "svc", "wifi", "disable");
+				this.adb("shell", "svc", "data", "disable");
+				break;
+			case "unknown":
+				throw new ActionableError("Cannot set network type to 'unknown'");
 		}
 	}
 
